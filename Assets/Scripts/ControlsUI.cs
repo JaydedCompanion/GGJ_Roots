@@ -13,9 +13,9 @@ public class ControlsUI : MonoBehaviour {
     public Shapes.Disc sCursor;
     public Shapes.Line sConnector;
     public Shapes.Polyline sArrowUp;
-    public Shapes.Polyline sArrowDown;
-    public Shapes.Polyline sArrowLeft;
-    public Shapes.Polyline sArrowRight;
+    public Shapes.Polyline sArrowDn;
+    public Shapes.Polyline sArrowLt;
+    public Shapes.Polyline sArrowRt;
     public Collider2D collOuterRadius;
     [Header("Status")]
     public Vector2 velocity;
@@ -31,10 +31,17 @@ public class ControlsUI : MonoBehaviour {
     public float cursorRadius;
     public float radiusMin = 1;
     public float radiusMax = 2;
+    [Header("Arrow Parameters")]
+    public float arrowResetSpeed;
+    public float arrowBumpDistance;
 
     private Rigidbody2D cursorRB;
     private CircleCollider2D collCursor;
     private CircleCollider2D collInnerRadius;
+    private Vector3 arrowLocalPosUp;
+    private Vector3 arrowLocalPosDn;
+    private Vector3 arrowLocalPosLt;
+    private Vector3 arrowLocalPosRt;
     private bool axisInputLockHori;
     private bool axisInputLockVert;
 
@@ -48,7 +55,11 @@ public class ControlsUI : MonoBehaviour {
         collCursor = sCursor.GetComponent<CircleCollider2D>();
         collInnerRadius = sInnerRadius.GetComponent<CircleCollider2D>();
 
-        cursorRB.velocity = Vector2.down;
+        //cursorRB.velocity = Vector2.down;
+        arrowLocalPosUp = sArrowUp.transform.localPosition;
+        arrowLocalPosDn = sArrowDn.transform.localPosition;
+        arrowLocalPosLt = sArrowLt.transform.localPosition;
+        arrowLocalPosRt = sArrowRt.transform.localPosition;
 
         SetUpUI();
 
@@ -70,6 +81,20 @@ public class ControlsUI : MonoBehaviour {
 
         collOuterRadius.transform.localPosition = sCursor.transform.localPosition.normalized * radiusMax;
         collOuterRadius.transform.localRotation = Quaternion.Euler(0, 0, pointingToAngle);
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            sArrowUp.transform.localPosition = arrowLocalPosUp * arrowBumpDistance;
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            sArrowDn.transform.localPosition = arrowLocalPosDn * arrowBumpDistance;
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            sArrowLt.transform.localPosition = arrowLocalPosLt * arrowBumpDistance;
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            sArrowRt.transform.localPosition = arrowLocalPosRt * arrowBumpDistance;
+
+        sArrowUp.transform.localPosition = Vector3.Lerp(sArrowUp.transform.localPosition, arrowLocalPosUp, Time.deltaTime * arrowResetSpeed);
+        sArrowDn.transform.localPosition = Vector3.Lerp(sArrowDn.transform.localPosition, arrowLocalPosDn, Time.deltaTime * arrowResetSpeed);
+        sArrowLt.transform.localPosition = Vector3.Lerp(sArrowLt.transform.localPosition, arrowLocalPosLt, Time.deltaTime * arrowResetSpeed);
+        sArrowRt.transform.localPosition = Vector3.Lerp(sArrowRt.transform.localPosition, arrowLocalPosRt, Time.deltaTime * arrowResetSpeed);
 
     }
 
@@ -113,7 +138,7 @@ public class ControlsUI : MonoBehaviour {
 
     public void Reset() {
         sCursor.transform.localPosition = Vector3.down * (radiusMin + cursorRadius);
-        cursorRB.velocity = Vector2.down;
+        //cursorRB.velocity = Vector2.down;
     }
 
 }

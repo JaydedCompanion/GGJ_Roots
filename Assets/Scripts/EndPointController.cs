@@ -8,6 +8,7 @@ public class EndPointController : MonoBehaviour {
 
     public float constantForwardSpeed;
     public float zOverTime;
+    public float zNoiseSpeed;
     public float angleLerpSpeed;
 
     // Start is called before the first frame update
@@ -21,7 +22,7 @@ public class EndPointController : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
-        transform.Translate(((Vector3.up * constantForwardSpeed) + (Vector3.forward * ControlsUI.instance.cursorMagnitude * zOverTime)) * Time.deltaTime);
+        transform.Translate(((Vector3.up * constantForwardSpeed) + (Vector3.forward * (Mathf.Pow (Mathf.PerlinNoise(Time.time * zNoiseSpeed, 0), 2) - 0.25f) * zOverTime)) * Time.deltaTime);
 
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, ControlsUI.instance.pointingToAngle), angleLerpSpeed * Time.deltaTime);
 

@@ -26,7 +26,7 @@ public class CameraTracker : MonoBehaviour {
     void LateUpdate() {
 
         Vector3 lookAt = EndPointController.instance.transform.position + (EndPointController.instance.transform.up * lookahead);
-        lookAt.z = -10;
+        lookAt.z = -100;
 
         lerpSpeed = Mathf.Lerp(lerpSpeed, defaultLerpSpeed, Time.deltaTime * 0.5f);
 
