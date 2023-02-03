@@ -13,7 +13,26 @@ public class MapGeneration : MonoBehaviour
     void Start()
     {
         float size = 3f;
+        float myAngle;
+        float myDepth;
+        for(int i=1; i<= 6; i++){
+            amount = Random.Range(i*size, 2*i*size);
+            for(int j=1; j <= amount; j++){
+                if(i==5)
+                    myAngle = Random.Range(1.3f * Mathf.PI, 1.7f * Mathf.PI);
+                else if(i==6)
+                    myAngle = Random.Range(1.35f * Mathf.PI, 1.65f * Mathf.PI);
+                else
+                    myAngle = Random.Range(Mathf.PI, 2 * Mathf.PI);
 
+                if(i==1)
+                    myDepth = Random.Range(10f,radius);
+                else
+                    myDepth = Random.Range((i-1) * radius, i * radius);
+                Instantiate(boneMeal, new Vector2(Mathf.Cos(myAngle) * myDepth, Mathf.Sin(myAngle) * myDepth), Quaternion.identity);
+            }
+        }
+        /*
         //generate in zone1
         amount = Random.Range(size, 2*size);
         for(int i=1; i <= amount; i++){
@@ -61,6 +80,7 @@ public class MapGeneration : MonoBehaviour
             float myDepth = Random.Range(5 * radius, 6 * radius);
             Instantiate(boneMeal, new Vector2(Mathf.Cos(myAngle) * myDepth, Mathf.Sin(myAngle) * myDepth), Quaternion.identity);
         }
+        */
     }
 
     // Update is called once per frame
