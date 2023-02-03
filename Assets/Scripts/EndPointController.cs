@@ -11,11 +11,15 @@ public class EndPointController : MonoBehaviour {
     public float zNoiseSpeed;
     public float angleLerpSpeed;
 
+    private CircleCollider2D coll;
+
     // Start is called before the first frame update
     void Start() {
 
         if (!instance)
             instance = this;
+
+        coll = GetComponent<CircleCollider2D>();
 
     }
 
@@ -26,6 +30,14 @@ public class EndPointController : MonoBehaviour {
 
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, ControlsUI.instance.pointingToAngle), angleLerpSpeed * Time.deltaTime);
 
+        if (RootRenderer.activeRoot)
+            coll.radius = RootRenderer.activeRoot.currentRadius;
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.GetComponent<Pickup>())
+            collision.GetComponent<Pickup>().Activate();
     }
 
 }
