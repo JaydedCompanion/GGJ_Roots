@@ -36,7 +36,9 @@ public class PickupBonemeal : Pickup {
 
     public void RootEnabled () {
         particlesLimitVel.enabled = false;
-        spawnedRoot.currentRootLength = spawnedRoot.maxRootLength * (1 - (lengthWhenActivated / spawnedBy.maxRootLength));
+        spawnedRoot.maxRootLength = spawnedBy.maxRootLength;
+        spawnedRoot.lineLength = spawnedRoot.maxRootLength * ((lengthWhenActivated / spawnedBy.maxRootLength));
+        spawnedRoot.baseRadius = spawnedBy.baseRadius * (1 - (lengthWhenActivated / spawnedBy.maxRootLength));
     }
 
     public override void Activate() {
@@ -48,8 +50,7 @@ public class PickupBonemeal : Pickup {
         GetComponent<Collider2D>().enabled = false;
 
         GameObject rootPrefab = Resources.Load("RootRenderer") as GameObject;
-        spawnedRoot = Instantiate(rootPrefab).GetComponent<RootRenderer>();
-        spawnedRoot.transform.position = EndPointController.instance.transform.position;
+        spawnedRoot = Instantiate(rootPrefab, EndPointController.instance.transform.position, Quaternion.identity).GetComponent<RootRenderer>();
         spawnedRoot.enabled = false;
         if (!RootRenderer.rootStack.Contains(spawnedRoot))
             RootRenderer.rootStack.Push(spawnedRoot);

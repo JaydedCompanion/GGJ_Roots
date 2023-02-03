@@ -9,21 +9,25 @@ public class RootRenderer : MonoBehaviour {
     public static RootRenderer activeRoot;
     public static Stack<RootRenderer> rootStack = new Stack<RootRenderer>();
 
+    public RootRenderer _activeRoot;
     public UnityEvent deathEvent = new UnityEvent();
     public Transform endpointPosition;
     public float baseRadius;
     public float currentRadius;
     public float radiusSmoothingSpeed;
     public float vertexDistance;
-    public float currentRootLength;
+    [SerializeField]
+    private float _currentRootLength;
     public float maxRootLength;
     public float endpointWidthOffset;
 
+    public float currentRootLength { get { return _currentRootLength; } private set { _currentRootLength = value; } }
     private TubeRenderer renderer;
     private List<Vector3> rendererPoints;
     private AnimationCurve rendererWidth = new AnimationCurve();
     private Transform endpointSphere;
-    private float lineLength;
+    [HideInInspector]
+    public float lineLength;
     private float lineTrailerLength;
 
     // Start is called before the first frame update
@@ -50,6 +54,8 @@ public class RootRenderer : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+
+        _activeRoot = activeRoot;
 
         if (!endpointPosition && EndPointController.instance)
             endpointPosition = EndPointController.instance.transform;
@@ -91,12 +97,14 @@ public class RootRenderer : MonoBehaviour {
         enabled = false;
         CameraTracker.instance.Recenter();
 
+        Debug.Log("Activating next root.");
+
         if (rootStack.Count > 0) {
             activeRoot = rootStack.Pop();
             activeRoot.enabled = true;
-            activeRoot.Start();
-            EndPointController.instance.transform.position = activeRoot.rendererPoints[activeRoot.rendererPoints.Count - 1];
+            EndPointController.instance.transform.position = activeRoot.transform.position;
             ControlsUI.instance.Reset();
+            Debug.Log("Activated root " + activeRoot, activeRoot);
         } else
             activeRoot = null;
 

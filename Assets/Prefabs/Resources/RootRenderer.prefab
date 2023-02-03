@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93fdaa6b58e9164448bdc039de126c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activeRoot: {fileID: 0}
   deathEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -173,10 +174,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: -1, z: 0}
+  - {x: 0, y: 0, z: 0}
   _sides: 32
-  _radiusOne: 0.5
-  _radiusTwo: 0.5
+  _radiusOne: 0
+  _radiusTwo: 0
   _useWorldSpace: 1
   _useTwoRadii: 1
   color: {r: 0, g: 0, b: 0, a: 0}
