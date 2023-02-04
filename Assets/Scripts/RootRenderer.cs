@@ -88,6 +88,7 @@ public class RootRenderer : MonoBehaviour {
         rendererPoints.Add(endpointPosition.position);
         renderer.SetPositions(rendererPoints.ToArray());
         lineLength += lineTrailerLength;
+        GameManager.instance.totalRootLength += lineTrailerLength;
     }
 
     private void ActivateNextRoot() {
@@ -105,8 +106,11 @@ public class RootRenderer : MonoBehaviour {
             EndPointController.instance.transform.position = activeRoot.transform.position;
             ControlsUI.instance.Reset();
             Debug.Log("Activated root " + activeRoot, activeRoot);
-        } else
+        } else {
             activeRoot = null;
+            CameraTracker.instance.endView = true;
+            GameManager.endEvent.Invoke();
+        }
 
     }
 

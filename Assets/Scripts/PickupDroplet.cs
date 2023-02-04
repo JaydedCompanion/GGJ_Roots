@@ -30,12 +30,12 @@ public class PickupDroplet : Pickup {
 
     }
 
-    public override void Activate() {
-        if (!RootRenderer.activeRoot || activated)
+    public override void Activate(RootRenderer activatedBy) {
+        if (activated)
             return;
         activated = true;
         GetComponent<Collider2D>().enabled = false;
-        RootRenderer.activeRoot.Extend(lengthAdd);
+        activatedBy.Extend(lengthAdd);
     }
 
 }

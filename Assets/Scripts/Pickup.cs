@@ -3,6 +3,6 @@ using UnityEngine;
 
 public abstract class Pickup: MonoBehaviour {
 
-    abstract public void Activate();
+    abstract public void Activate(RootRenderer activatedBy);
 
 }

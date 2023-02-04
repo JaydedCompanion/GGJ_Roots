@@ -35,7 +35,7 @@ public class ControlsUI : MonoBehaviour {
     public float arrowResetSpeed;
     public float arrowBumpDistance;
 
-    private Rigidbody2D cursorRB;
+    public Rigidbody2D cursorRB { get; private set; }
     private CircleCollider2D collCursor;
     private CircleCollider2D collInnerRadius;
     private Vector3 arrowLocalPosUp;
@@ -70,6 +70,8 @@ public class ControlsUI : MonoBehaviour {
 
         if (!Application.isPlaying)
             SetUpUI();
+        else
+            transform.localScale = Vector3.Lerp(transform.localScale, CameraTracker.instance.endView ? Vector3.zero : Vector3.one, Time.deltaTime);
 
         pointingTo = sCursor.transform.localPosition.normalized;
         pointingToAngle = Vector2.SignedAngle(Vector2.up, sCursor.transform.localPosition);

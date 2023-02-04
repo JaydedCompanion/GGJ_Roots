@@ -8,10 +8,13 @@ public class PickupBonemeal : Pickup {
 
     private ParticleSystem particles;
     private ParticleSystem.LimitVelocityOverLifetimeModule particlesLimitVel;
+    private ParticleSystem.VelocityOverLifetimeModule particlesVelOverTime;
     private MeshRenderer renderer;
     private RootRenderer spawnedBy;
     private RootRenderer spawnedRoot;
     private Vector3 activatedPos;
+    private Vector2 controllerLocalPos;
+    private Vector2 controllerVel;
     private float lengthWhenActivated;
     private bool activated;
 
@@ -20,6 +23,7 @@ public class PickupBonemeal : Pickup {
 
         particles = GetComponentInChildren<ParticleSystem>();
         particlesLimitVel = particles.limitVelocityOverLifetime;
+        particlesVelOverTime = particles.velocityOverLifetime;
         renderer = GetComponentInChildren<MeshRenderer>();
 
     }
@@ -36,12 +40,15 @@ public class PickupBonemeal : Pickup {
 
     public void RootEnabled () {
         particlesLimitVel.enabled = false;
+        particlesVelOverTime.enabled = false;
         spawnedRoot.maxRootLength = spawnedBy.maxRootLength;
         spawnedRoot.lineLength = spawnedRoot.maxRootLength * ((lengthWhenActivated / spawnedBy.maxRootLength));
         spawnedRoot.baseRadius = spawnedBy.baseRadius * (1 - (lengthWhenActivated / spawnedBy.maxRootLength));
+        ControlsUI.instance.sCursor.transform.localPosition = controllerLocalPos;
+        ControlsUI.instance.cursorRB.velocity = controllerVel;
     }
 
-    public override void Activate() {
+    public override void Activate(RootRenderer activatedBy) {
 
         if (activated)
             return;
@@ -55,8 +62,11 @@ public class PickupBonemeal : Pickup {
         if (!RootRenderer.rootStack.Contains(spawnedRoot))
             RootRenderer.rootStack.Push(spawnedRoot);
 
-        spawnedBy = RootRenderer.activeRoot;
+        spawnedBy = activatedBy;
         spawnedBy.deathEvent.AddListener(RootEnabled);
+
+        controllerLocalPos = ControlsUI.instance.sCursor.transform.localPosition;
+        controllerVel = ControlsUI.instance.cursorRB.velocity;
 
         activatedPos = spawnedRoot.transform.position;
         lengthWhenActivated = RootRenderer.activeRoot.currentRootLength;

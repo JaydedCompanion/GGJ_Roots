@@ -30,14 +30,19 @@ public class EndPointController : MonoBehaviour {
 
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, ControlsUI.instance.pointingToAngle), angleLerpSpeed * Time.deltaTime);
 
-        if (RootRenderer.activeRoot)
+        if (RootRenderer.activeRoot) {
             coll.radius = RootRenderer.activeRoot.currentRadius;
+            if (transform.position.y < GameManager.instance.lowestPoint)
+                GameManager.instance.lowestPoint = transform.position.y;
+        }
 
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {
+        if (!RootRenderer.activeRoot)
+            return;
         if (collision.GetComponent<Pickup>())
-            collision.GetComponent<Pickup>().Activate();
+            collision.GetComponent<Pickup>().Activate(RootRenderer.activeRoot);
     }
 
 }
