@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour {
             canvas.SetActive(false);
         yield return null;
 
-        ScreenCapture.CaptureScreenshot(System.DateTime.Now.ToLongTimeString().Replace('/', '.') + " - " + totalRootLength + "cm.png");
+        ScreenCapture.CaptureScreenshot("Ebb&GrowScreenshots/Ebb&Grow - " + totalRootLength + " - " + System.DateTime.Now.ToLongTimeString().Replace(':', '.').Replace('/', '.') + "cm.png");
         yield return null;
 
         ControlsUI.instance.gameObject.SetActive(true);
