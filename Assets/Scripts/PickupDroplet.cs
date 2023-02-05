@@ -28,6 +28,8 @@ public class PickupDroplet : Pickup {
 
         renderer.material.SetFloat("_Disappear", disappearAnim.Evaluate(Time.time - startTime));
 
+        base.Update();
+
     }
 
     public override void Activate(RootRenderer activatedBy) {

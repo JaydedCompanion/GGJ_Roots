@@ -24,7 +24,6 @@ public class RootRenderer : MonoBehaviour {
     public float currentRootLength { get { return _currentRootLength; } private set { _currentRootLength = value; } }
     private TubeRenderer renderer;
     private List<Vector3> rendererPoints;
-    private AnimationCurve rendererWidth = new AnimationCurve();
     private Transform endpointSphere;
     [HideInInspector]
     public float lineLength;
@@ -93,8 +92,9 @@ public class RootRenderer : MonoBehaviour {
 
     private void ActivateNextRoot() {
 
-        endpointSphere.position = rendererPoints[rendererPoints.Count - 1];
-        endpointSphere.localScale = Vector3.one * renderer._radiusTwo * 2;
+        //endpointSphere.position = rendererPoints[rendererPoints.Count - 1];
+        //endpointSphere.localScale = Vector3.one * renderer._radiusTwo * 2;
+        endpointSphere.gameObject.SetActive(false);
         enabled = false;
         CameraTracker.instance.Recenter();
 
@@ -106,6 +106,8 @@ public class RootRenderer : MonoBehaviour {
             EndPointController.instance.transform.position = activeRoot.transform.position;
             ControlsUI.instance.Reset();
             Debug.Log("Activated root " + activeRoot, activeRoot);
+            if (PickupBonemeal.pickupBonemealStack.Count > 0)
+                PickupBonemeal.pickupBonemealStack.Pop().RootEnabled();
         } else {
             activeRoot = null;
             CameraTracker.instance.endView = true;

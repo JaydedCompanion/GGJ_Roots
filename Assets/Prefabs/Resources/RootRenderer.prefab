@@ -53,12 +53,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   endpointPosition: {fileID: 0}
-  baseRadius: 0.5
+  baseRadius: 1
   currentRadius: 0
   radiusSmoothingSpeed: 10
-  vertexDistance: 0.1
+  vertexDistance: 0.25
   _currentRootLength: 0
-  maxRootLength: 10
+  maxRootLength: 40
   endpointWidthOffset: 0
   lineLength: 0
 --- !u!114 &3297106727266724726
@@ -76,7 +76,7 @@ MonoBehaviour:
   _positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
-  _sides: 32
+  _sides: 16
   _radiusOne: 0
   _radiusTwo: 0
   _useWorldSpace: 1

@@ -6,6 +6,8 @@ public class MapGeneration : MonoBehaviour
 {
     [SerializeField] private GameObject boneMeal;
     [SerializeField] private GameObject water;
+    [Range(0, 1)]
+    [SerializeField] private float randomBias;
     [SerializeField] private float interval = 5f;
     [SerializeField] private float x_area = 15f;
     [SerializeField] private float y_area = 13f;
@@ -68,12 +70,14 @@ public class MapGeneration : MonoBehaviour
                 myAngle = Random.Range(0f, 1.99f * Mathf.PI);
                 myDepth = Random.Range(shift_min,shift_max);
                 Vector2 mylocation = new Vector2(location.x + Mathf.Cos(myAngle) * myDepth, location.y + Mathf.Sin(myAngle) * myDepth);
-                myType = Random.Range(-1f,1f);
-                if(myType >= 0){
-                    GameObject bm = Instantiate(water, mylocation, Quaternion.identity);
+                myType = Random.Range(0f,1f);
+                GameObject bm = null;
+                if (myType >= randomBias){
+                    bm = Instantiate(water, mylocation, Quaternion.identity);
                 }else{
-                    GameObject bm = Instantiate(boneMeal, mylocation, Quaternion.identity);
+                    bm = Instantiate(boneMeal, mylocation, Quaternion.identity);
                 }
+                bm.transform.parent = transform;
             }
         }
 
@@ -86,12 +90,14 @@ public class MapGeneration : MonoBehaviour
                 myAngle = Random.Range(0f, 1.99f * Mathf.PI);
                 myDepth = Random.Range(shift_min,shift_max);
                 Vector2 mylocation2 = new Vector2(location2.x + Mathf.Cos(myAngle) * myDepth, location2.y + Mathf.Sin(myAngle) * myDepth);
-                myType = Random.Range(-1f,1f);
-                if(myType >= 0){
-                    GameObject bm = Instantiate(water, mylocation2, Quaternion.identity);
+                myType = Random.Range(0f,1f);
+                GameObject bm = null;
+                if(myType >= randomBias){
+                    bm = Instantiate(water, mylocation2, Quaternion.identity);
                 }else{
-                    GameObject bm = Instantiate(boneMeal, mylocation2, Quaternion.identity);
+                    bm = Instantiate(boneMeal, mylocation2, Quaternion.identity);
                 }
+                bm.transform.parent = transform;
             }
         }
 

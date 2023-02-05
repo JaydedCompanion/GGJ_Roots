@@ -44,6 +44,7 @@ public class ControlsUI : MonoBehaviour {
     private Vector3 arrowLocalPosDn;
     private Vector3 arrowLocalPosLt;
     private Vector3 arrowLocalPosRt;
+    public Vector3 startScale;
     private bool axisInputLockHori;
     private bool axisInputLockVert;
 
@@ -63,6 +64,8 @@ public class ControlsUI : MonoBehaviour {
         arrowLocalPosLt = sArrowLt.transform.localPosition;
         arrowLocalPosRt = sArrowRt.transform.localPosition;
 
+        startScale = transform.localScale;
+
         SetUpUI();
 
     }
@@ -73,12 +76,12 @@ public class ControlsUI : MonoBehaviour {
         if (!Application.isPlaying)
             SetUpUI();
         else
-            transform.localScale = Vector3.Lerp(transform.localScale, CameraTracker.instance.endView ? Vector3.zero : Vector3.one, Time.deltaTime);
+            transform.localScale = Vector3.Lerp(transform.localScale, CameraTracker.instance.endView ? Vector3.zero : startScale, Time.deltaTime);
 
         pointingTo = sCursor.transform.localPosition.normalized;
         pointingToAngle = Vector2.SignedAngle(Vector2.up, sCursor.transform.localPosition);
 
-        cursorMagnitude = (Vector2.Distance(transform.position, sCursor.transform.position) - cursorRadius);
+        cursorMagnitude = ((Vector2.Distance(transform.position, sCursor.transform.position)/transform.localScale.y) - (cursorRadius));
         sConnector.End = Vector3.down * cursorMagnitude;
         sConnector.transform.localRotation = Quaternion.Euler(0, 0, pointingToAngle + 180);
         sInnerRadius.transform.localRotation = Quaternion.Euler(0, 0, pointingToAngle + 180);
@@ -95,34 +98,41 @@ public class ControlsUI : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
             sArrowRt.transform.localPosition = arrowLocalPosRt * arrowBumpDistance;
 
-        sArrowUp.transform.localPosition = Vector3.Lerp(sArrowUp.transform.localPosition, arrowLocalPosUp, Time.deltaTime * arrowResetSpeed);
-        sArrowDn.transform.localPosition = Vector3.Lerp(sArrowDn.transform.localPosition, arrowLocalPosDn, Time.deltaTime * arrowResetSpeed);
-        sArrowLt.transform.localPosition = Vector3.Lerp(sArrowLt.transform.localPosition, arrowLocalPosLt, Time.deltaTime * arrowResetSpeed);
-        sArrowRt.transform.localPosition = Vector3.Lerp(sArrowRt.transform.localPosition, arrowLocalPosRt, Time.deltaTime * arrowResetSpeed);
+        if (Application.isPlaying) {
+            sArrowUp.transform.localPosition = Vector3.Lerp(sArrowUp.transform.localPosition, arrowLocalPosUp, Time.deltaTime * arrowResetSpeed);
+            sArrowDn.transform.localPosition = Vector3.Lerp(sArrowDn.transform.localPosition, arrowLocalPosDn, Time.deltaTime * arrowResetSpeed);
+            sArrowLt.transform.localPosition = Vector3.Lerp(sArrowLt.transform.localPosition, arrowLocalPosLt, Time.deltaTime * arrowResetSpeed);
+            sArrowRt.transform.localPosition = Vector3.Lerp(sArrowRt.transform.localPosition, arrowLocalPosRt, Time.deltaTime * arrowResetSpeed);
+        }
 
     }
 
     private void FixedUpdate() {
 
-        if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.1f) {
-            if (!axisInputLockHori)
-                cursorRB.AddForce(new Vector2(Input.GetAxisRaw("Horizontal"), 0) * speedAccel);
-            axisInputLockHori = true;
-        } else
-            axisInputLockHori = false;
+        if (!GameManager.instance.paused) {
 
-        if (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f) {
-            if (!axisInputLockVert)
-                cursorRB.AddForce(new Vector2(0, Input.GetAxisRaw("Vertical")) * speedAccel);
-            axisInputLockVert = true;
-        } else
-            axisInputLockVert = false;
+            if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.1f) {
+                if (!axisInputLockHori)
+                    cursorRB.AddForce(new Vector2(Input.GetAxisRaw("Horizontal"), 0) * speedAccel);
+                axisInputLockHori = true;
+            } else
+                axisInputLockHori = false;
+
+            if (Mathf.Abs(Input.GetAxisRaw("Vertical")) > 0.1f) {
+                if (!axisInputLockVert)
+                    cursorRB.AddForce(new Vector2(0, Input.GetAxisRaw("Vertical")) * speedAccel);
+                axisInputLockVert = true;
+            } else
+                axisInputLockVert = false;
+
+            if (cursorRB.velocity.magnitude < speedMin)
+                cursorRB.AddForce(cursorRB.velocity.normalized * underSpeedAccel * Time.fixedDeltaTime);
+            cursorRB.AddForce(new Vector2(Mathf.PerlinNoise(Time.time * perlinSpeed, 0) - 0.5f, Mathf.PerlinNoise(Time.time * perlinSpeed, 32) - 0.5f) * perlinSpeed);
+        }
 
         cursorRB.velocity = Vector2.ClampMagnitude(cursorRB.velocity, speedMax);
 
-        if (cursorRB.velocity.magnitude < speedMin)
-            cursorRB.AddForce(cursorRB.velocity.normalized * underSpeedAccel * Time.fixedDeltaTime);
-        cursorRB.AddForce(new Vector2(Mathf.PerlinNoise(Time.time * perlinSpeed, 0) - 0.5f, Mathf.PerlinNoise(Time.time * perlinSpeed, 32) - 0.5f) * perlinSpeed);
+        cursorRB.isKinematic = GameManager.instance.paused;
 
         velocity = cursorRB.velocity;
 

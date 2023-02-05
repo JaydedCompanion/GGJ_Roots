@@ -11,6 +11,7 @@ public class EndPointController : MonoBehaviour {
     public float zOverTime;
     public float zNoiseSpeed;
     public float angleLerpSpeed;
+    public float collRadiusOffset;
 
     private CircleCollider2D coll;
 
@@ -32,10 +33,12 @@ public class EndPointController : MonoBehaviour {
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, ControlsUI.instance.pointingToAngle), angleLerpSpeed * Time.deltaTime);
 
         if (RootRenderer.activeRoot) {
-            coll.radius = RootRenderer.activeRoot.currentRadius;
+            coll.radius = RootRenderer.activeRoot.currentRadius + collRadiusOffset;
             if (transform.position.y < GameManager.instance.lowestPoint)
                 GameManager.instance.lowestPoint = transform.position.y;
         }
+
+        coll.enabled = RootRenderer.activeRoot;
 
         rootMat.SetVector("_Cursor_Position", transform.position);
 

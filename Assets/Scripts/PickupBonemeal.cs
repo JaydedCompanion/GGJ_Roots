@@ -4,28 +4,26 @@ using UnityEngine;
 
 public class PickupBonemeal : Pickup {
 
-    public float spinSpeed;
+    public static Stack<PickupBonemeal> pickupBonemealStack = new Stack<PickupBonemeal>();
 
-    private ParticleSystem particles;
-    private ParticleSystem.LimitVelocityOverLifetimeModule particlesLimitVel;
-    private ParticleSystem.VelocityOverLifetimeModule particlesVelOverTime;
+    public float spinSpeed;
+    public ParticleSystem particles;
+    public ParticleSystem particlesActivate;
+
     private MeshRenderer renderer;
     private RootRenderer spawnedBy;
     private RootRenderer spawnedRoot;
     private Vector3 activatedPos;
     private Vector2 controllerLocalPos;
     private Vector2 controllerVel;
+    private float maxLengthWhenActivated;
     private float lengthWhenActivated;
+    private float relativeLengthWhenActivated;
     private bool activated;
 
     // Start is called before the first frame update
     void Start() {
-
-        particles = GetComponentInChildren<ParticleSystem>();
-        particlesLimitVel = particles.limitVelocityOverLifetime;
-        particlesVelOverTime = particles.velocityOverLifetime;
         renderer = GetComponentInChildren<MeshRenderer>();
-
     }
 
     // Update is called once per frame
@@ -36,13 +34,17 @@ public class PickupBonemeal : Pickup {
         if (activated)
             transform.position = Vector3.Lerp(transform.position, activatedPos, Time.deltaTime);
 
+        base.Update();
+
     }
 
     public void RootEnabled () {
-        particlesLimitVel.enabled = false;
-        particlesVelOverTime.enabled = false;
+        particles.gameObject.SetActive(false);
+        particlesActivate.Play();
+        //spawnedRoot.maxRootLength = lengthWhenActivated;
         spawnedRoot.maxRootLength = spawnedBy.maxRootLength;
         spawnedRoot.lineLength = spawnedRoot.maxRootLength * ((lengthWhenActivated / spawnedBy.maxRootLength));
+        //spawnedRoot.lineLength = spawnedRoot.maxRootLength * relativeLengthWhenActivated;
         spawnedRoot.baseRadius = spawnedBy.baseRadius * (1 - (lengthWhenActivated / spawnedBy.maxRootLength));
         ControlsUI.instance.sCursor.transform.localPosition = controllerLocalPos;
         ControlsUI.instance.cursorRB.velocity = controllerVel;
@@ -55,6 +57,7 @@ public class PickupBonemeal : Pickup {
 
         activated = true;
         GetComponent<Collider2D>().enabled = false;
+        pickupBonemealStack.Push(this);
 
         GameObject rootPrefab = Resources.Load("RootRenderer") as GameObject;
         spawnedRoot = Instantiate(rootPrefab, EndPointController.instance.transform.position, Quaternion.identity).GetComponent<RootRenderer>();
@@ -63,13 +66,13 @@ public class PickupBonemeal : Pickup {
             RootRenderer.rootStack.Push(spawnedRoot);
 
         spawnedBy = activatedBy;
-        spawnedBy.deathEvent.AddListener(RootEnabled);
 
         controllerLocalPos = ControlsUI.instance.sCursor.transform.localPosition;
         controllerVel = ControlsUI.instance.cursorRB.velocity;
 
         activatedPos = spawnedRoot.transform.position;
-        lengthWhenActivated = RootRenderer.activeRoot.currentRootLength;
+        lengthWhenActivated = activatedBy.currentRootLength;
+        relativeLengthWhenActivated = activatedBy.currentRootLength / activatedBy.maxRootLength;
         particles.Play();
         renderer.enabled = false;
 
