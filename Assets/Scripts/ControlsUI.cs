@@ -27,6 +27,8 @@ public class ControlsUI : MonoBehaviour {
     public float speedMin;
     public float speedMax;
     public float underSpeedAccel;
+    public float perlinForce;
+    public float perlinSpeed;
     [Header("Area Parameters")]
     public float cursorRadius;
     public float radiusMin = 1;
@@ -120,6 +122,7 @@ public class ControlsUI : MonoBehaviour {
 
         if (cursorRB.velocity.magnitude < speedMin)
             cursorRB.AddForce(cursorRB.velocity.normalized * underSpeedAccel * Time.fixedDeltaTime);
+        cursorRB.AddForce(new Vector2(Mathf.PerlinNoise(Time.time * perlinSpeed, 0) - 0.5f, Mathf.PerlinNoise(Time.time * perlinSpeed, 32) - 0.5f) * perlinSpeed);
 
         velocity = cursorRB.velocity;
 

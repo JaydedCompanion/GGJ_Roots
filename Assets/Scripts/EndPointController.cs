@@ -5,6 +5,7 @@ using UnityEngine;
 public class EndPointController : MonoBehaviour {
 
     public static EndPointController instance;
+    public Material rootMat;
 
     public float constantForwardSpeed;
     public float zOverTime;
@@ -35,6 +36,8 @@ public class EndPointController : MonoBehaviour {
             if (transform.position.y < GameManager.instance.lowestPoint)
                 GameManager.instance.lowestPoint = transform.position.y;
         }
+
+        rootMat.SetVector("_Cursor_Position", transform.position);
 
     }
 
