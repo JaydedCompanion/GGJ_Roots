@@ -122,7 +122,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  lengthAdd: 5
+  lengthAdd: 1
   animStartTime: 0
 --- !u!50 &418939278788425267
 Rigidbody2D:
