@@ -48,17 +48,24 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R)) {
             SceneManager.LoadScene(0);
+            paused = false;
+            totalRootLength = 0;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
             StartCoroutine("ScreenshotCoroutine");
         }
 
+        if (!newHighScore)
+            newHighScore = GameObject.Find("Text.NewHighScore").GetComponent<TMPro.TextMeshProUGUI>();
         newHighScore.color = (totalRootLength > highScore) ? Color.HSVToRGB((Time.time * highScoreHueSpinSpeed) % 1f, highScoreSaturation, 1) : Color.white;
-
         newHighScore.text = (totalRootLength > highScore) ? "New High Score!" : "Best: " + highScore + "cm";
 
+
+        if (!lengthUIDisplay)
+            lengthUIDisplay = GameObject.Find("Text.RootLength").GetComponent<UIDigits>();
         lengthUIDisplay.value = totalRootLength;
 
         if (gameStarted && Input.GetButtonDown("Cancel"))
@@ -78,6 +85,7 @@ public class GameManager : MonoBehaviour {
 
     void EvaluateNewHighScore() {
         if (totalRootLength > highScore) {
+            highScore = Mathf.RoundToInt (totalRootLength);
             PlayerPrefs.SetInt("highScore", Mathf.RoundToInt (totalRootLength));
             PlayerPrefs.Save();
         }
